@@ -1,38 +1,41 @@
-let scene, camera, renderer, mesh, controls;
+// Scene setup
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-init();
-animate();
-
-function init() {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 5;
-
-    renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    const geometry = new THREE.TorusKnotGeometry(1, 0.3, 100, 16);
-    const material = new THREE.MeshNormalMaterial();
-    mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-
-    window.addEventListener('resize', onWindowResize, false);
-}
-
-function onWindowResize() {
+// Resize listener to adjust the canvas size
+window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-}
+});
 
+// Geometry and material
+const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+const material = new THREE.MeshStandardMaterial({ color: 0x00ff00, wireframe: true });
+const torusKnot = new THREE.Mesh(geometry, material);
+scene.add(torusKnot);
+
+// Lighting
+const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+scene.add(ambientLight);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+scene.add(directionalLight);
+
+// Camera position
+camera.position.z = 50;
+
+// Animation loop
 function animate() {
     requestAnimationFrame(animate);
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.01;
-    controls.update();
+
+    // Animation or transformation goes here
+    torusKnot.rotation.x += 0.01;
+    torusKnot.rotation.y += 0.01;
+
     renderer.render(scene, camera);
 }
+
+animate();
